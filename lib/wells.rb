@@ -33,7 +33,7 @@ class Wells
 
             plates = split_matrix_to_plates(matrix,plate_size)
             
-            #puts JSON.pretty_generate(plates)
+            puts JSON.pretty_generate(plates)
 
             plates
         end
