@@ -1,0 +1,94 @@
+<style>
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 16px;
+}
+table, th, td {
+    border: 1px solid;
+}
+th, td {
+    padding: 2px;
+}
+th {background: silver; border:0px;}
+td {
+    text-align:center;
+    height:20px;
+    font-size: 12px;
+    min-width: 40px;
+}
+td::before {
+  content: "\00a0";
+}
+form {
+    margin-block: 0.5em;
+    padding: 0.5em;
+    border: 1px solid silver;
+    position:relative;
+}
+form input {
+    padding:0.25em;
+    border:1px solid silver;
+    border-radius:2px;
+}
+</style>
+<h1>Select plate size</h1>
+
+<% unless @permitted_params[:plate_size].nil? %>
+    <%= form_with method: :get do |form| %>
+        <%= form.label :samples_array, "Samples array" %>
+        <br />
+        <%= form.text_field :samples_array, value: @permitted_params[:samples_array] %>
+        <br />
+        <%= form.label :reagents_array, "Reagents array" %>
+        <br />
+        <%= form.text_field :reagents_array, value: @permitted_params[:reagents_array] %>
+        <br />
+        <%= form.label :replicates, "Replicates" %>
+        <br />
+        <%= form.text_field :replicates, value: @permitted_params[:replicates] %>
+        <br />
+        <%= form.submit "Submit" %> <a href="/plates">Reset</a>
+        <div style="position:absolute;top:0;right:0;max-width:50%">
+            <ul>            
+            <li><a href='/plates/96?samples_array=%5B%5B%27Sam+1%27%2C+%27Sam+2%27%2C+%27Sam+3%27%2C%27Sam+4%27%5D%2C+%5B%27Sam+1%27%2C+%27Sam+3%27%2C+%27Sam+4%27%5D%5D&reagents_array=%5B%5B%27Reag+X%27%2C+%27Reag+Y%27%5D%2C+%5B%27Reag+Y%27%2C+%27Reag+Z%27%5D%5D&replicates=%5B1%2C3%5D&commit=Submit'>Example 1 / 96</a></li>
+            <li><a href='/plates/96?samples_array=%5B%5B%27Sam+1%27%2C+%27Sam+2%27%2C+%27Sam+3%27%2C%27Sam+4%27%5D%2C+%5B%27Sam+1%27%2C+%27Sam+3%27%2C+%27Sam+4%27%5D%2C%5B%27Sam+1%27%5D%5D&reagents_array=%5B%5B%27Reag+X%27%2C+%27Reag+Y%27%5D%2C+%5B%27Reag+Y%27%2C+%27Reag+Z%27%5D%2C%5B%27Reag+W%27%5D%5D&replicates=%5B1%2C3%2C5%5D&commit=Submit'>Example 2 / 96</a></li>
+            <li><a href='/plates/384?samples_array=%5B%5B%27Sam+1%27%2C+%27Sam+2%27%2C+%27Sam+3%27%2C%27Sam+4%27%5D%2C+%5B%27Sam+1%27%2C+%27Sam+3%27%2C+%27Sam+4%27%5D%2C%5B%27Sam+1%27%5D%5D&reagents_array=%5B%5B%27Reag+X%27%2C+%27Reag+Y%27%5D%2C+%5B%27Reag+Y%27%2C+%27Reag+Z%27%5D%2C%5B%27Reag+W%27%5D%5D&replicates=%5B1%2C3%2C5%5D&commit=Submit'>Example 3 / 384</a></li>
+            <li><a href='/plates/384?samples_array=%5B%5B%27Sam+1%27%2C+%27Sam+2%27%2C+%27Sam+3%27%2C%27Sam+4%27%5D%2C+%5B%27Sam+1%27%2C+%27Sam+3%27%2C+%27Sam+4%27%5D%2C%5B%27Sam+1%27%5D%5D&reagents_array=%5B%5B%27Reag+X%27%2C+%27Reag+Y%27%5D%2C+%5B%27Reag+Y%27%2C+%27Reag+Z%27%5D%2C%5B%27Reag+W%27%2C%27Reag+Q%27%5D%5D&replicates=%5B10%2C3%2C5%5D&commit=Submit'>Example 4 / 384</a></li>            
+            <li><a href='/plates/96?samples_array=%5B%5B%27Sam+1%27%2C+%27Sam+2%27%2C+%27Sam+3%27%2C%27Sam+4%27%5D%2C+%5B%27Sam+1%27%2C+%27Sam+3%27%2C+%27Sam+4%27%5D%2C%5B%27Sam+10%27%2C%27Sam+11%27%2C%27Sam+12%27%2C%27Sam+13%27%2C%27Sam+14%27%2C%27Sam+15%27%5D%5D&reagents_array=%5B%5B%27Reag+X%27%2C+%27Reag+Y%27%5D%2C+%5B%27Reag+Y%27%2C+%27Reag+Z%27%5D%2C%5B%27Reag+W%27%5D%5D&replicates=%5B1%2C3%2C3%5D&commit=Submit'>Example 5 / 96</a></li>
+            </ul>
+        </div>
+
+    <% end %>
+<% else %>
+    <%= link_to "96", plates_with_size_url(plate_size: 96) %> 
+    <%= link_to "384", plates_with_size_url(plate_size: 384) %> 
+<% end %>
+
+<% if @plates %>
+    <% @plates.each do |plate| %>
+        <table style="margin-top:20px">
+            <thead>
+                <tr>
+                    <th></th>
+                    <% plate[0].each do |a| %>
+                        <th>
+                            <b><%= a.is_a?(Array) ? a[1] : "" %></b>
+                        </th>
+                    <% end %>
+                </tr>
+            </thead>            
+            <% plate.each do |rows| %>
+                <tr>
+                    <th><%= rows[0].is_a?(Array) ? rows[0][0] : ""  %></th>
+                    <% rows.each_with_index do |column, idx| %>
+                        <td>
+                            <%= column.is_a?(Array) ? "#{column[0]} #{column[1]}" : "" %>
+                        </td>
+                    <% end %>
+                </tr>
+            <% end %>
+        </table>
+    <% end %>
+<% end %>
+
